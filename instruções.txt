@@ -1,0 +1,12 @@
+cd C:\Users\tiago\Documents\projetos-git\08-turnStile\99-backendJava\backend
+
+.\mvnw.cmd spring-boot:run
+
+em outro terminal
+cd C:\Users\tiago\Documents\projetos-git\08-turnStile\01-frontendVite
+
+npm run dev
+
+No navegador (chrome, edge, etc.):
+Acesse http://localhost:5173/
+Faça login com o telefone de teste: 11987654321

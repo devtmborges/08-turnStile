@@ -6,8 +6,11 @@ const QRCodeScanner = ({ onScanSuccess, onScanError }) => {
     const scannerRef = useRef(null);
 
     useEffect(() => {
-        // Garante que o scanner só seja inicializado uma vez
+        // Evita inicializar o scanner mais de uma vez
         if (!scannerRef.current) {
+            // Verifica se o elemento de referência está disponível
+            if (!qrcodeRef.current) return;
+            
             scannerRef.current = new Html5QrcodeScanner(
                 // ID do elemento HTML onde o scanner será renderizado
                 qrcodeRef.current.id,
@@ -15,26 +18,29 @@ const QRCodeScanner = ({ onScanSuccess, onScanError }) => {
                 /* verbose= */ false
             );
 
+            // A função onScanSuccess é o callback que lida com o QR Code lido
             const successCallback = (decodedText, decodedResult) => {
-                // Para o scanner após a leitura bem-sucedida e passa o texto
+                // Para o scanner após a primeira leitura bem-sucedida
                 scannerRef.current.clear(); 
                 onScanSuccess(decodedText);
             };
 
+            // Inicia o scanner
             scannerRef.current.render(successCallback, onScanError);
         }
 
-        // Cleanup: Desliga a câmera ao sair da página
+        // Cleanup: Garante que a câmera seja desligada quando o componente for desmontado
         return () => {
             if (scannerRef.current) {
+                // O método clear retorna uma Promise
                 scannerRef.current.clear().catch(error => {
-                    console.error("Falha ao desligar o scanner de QR Code.", error);
+                    // console.error("Falha ao desligar o scanner de QR Code.", error);
                 });
             }
         };
     }, [onScanSuccess, onScanError]);
 
-    // O div com este ID é onde a câmera será exibida
+    // O ID deve ser renderizado para o Html5QrcodeScanner encontrá-lo
     return <div id="qrcode-reader" ref={qrcodeRef} className="w-full h-auto" />;
 };
 
