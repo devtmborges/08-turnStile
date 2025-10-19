@@ -1,12 +1,14 @@
 package br.com.turnstile.backend.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+// Removendo imports de relacionamento que Person não usa: ManyToOne, OneToOne, JoinColumn, MapsId
+
+import jakarta.validation.constraints.NotNull; // << NOVO: Necessário para @NotNull
+import java.time.LocalDateTime; // << NOVO: Necessário para LocalDateTime
 
 @Entity
 public class Person {
@@ -23,14 +25,72 @@ public class Person {
     
     private String email;
 
-    // A flag "member" que você mencionou (apenas para controle interno, se for necessário)
     private Boolean isMember = false; 
+    
+    private Boolean isMinor = false; 
 
     private LocalDateTime dataRegistro = LocalDateTime.now();
 
     // --- Construtor Padrão ---
     public Person() {}
 
-    // --- Getters e Setters (Necessários para todos os campos) ---
-    // ... (Coloque aqui todos os Getters e Setters)
+    // ------------------------------------
+    // --- GETTERS E SETTERS (COMPLETOS)---
+    // ------------------------------------
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Boolean getIsMember() {
+        return isMember;
+    }
+
+    public void setIsMember(Boolean isMember) {
+        this.isMember = isMember;
+    }
+
+    public Boolean getIsMinor() {
+        return isMinor;
+    }
+
+    public void setIsMinor(Boolean isMinor) {
+        this.isMinor = isMinor;
+    }
+
+    public LocalDateTime getDataRegistro() {
+        return dataRegistro;
+    }
+
+    public void setDataRegistro(LocalDateTime dataRegistro) {
+        this.dataRegistro = dataRegistro;
+    }
 }

@@ -2,35 +2,45 @@ package br.com.turnstile.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
-import jakarta.validation.constraints.NotNull;
-import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull; // << NOVO: Necessário para @NotNull
+
+// Removido: import jakarta.persistence.GeneratedValue;
+// Removido: import jakarta.persistence.GenerationType;
 
 @Entity
 public class Assisted {
 
-    // A chave primária é a mesma ID da Pessoa (relação 1:1)
     @Id 
     private Long id; 
 
-    // O ID do QR Code (de 1 a 300) - Este campo precisa ser único
-    @NotNull
+    // O QR Code ID não é @NotNull porque menores não o terão, mas o responsável sim
     @Column(unique = true) 
     private Integer qrCodeId;
     
-    // A Pessoa associada a este QR Code
+    // A Pessoa associada a este registro de atendimento
     @OneToOne
-    @MapsId // Mapeia a PK desta entidade para a PK da Person
+    @MapsId 
     @JoinColumn(name = "person_id")
+    @NotNull // O Assisted DEVE estar associado a uma Person
     private Person person;
+    
+    // Linka este atendido (criança) ao seu responsável
+    @ManyToOne
+    @JoinColumn(name = "responsible_id")
+    private Person responsible; 
     
     // --- Construtor Padrão ---
     public Assisted() {}
 
-    // --- Getters e Setters ---
-    
+    // ------------------------------------
+    // --- GETTERS E SETTERS (COMPLETOS)---
+    // ------------------------------------
+
     public Long getId() {
         return id;
     }
@@ -53,5 +63,13 @@ public class Assisted {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public Person getResponsible() {
+        return responsible;
+    }
+
+    public void setResponsible(Person responsible) {
+        this.responsible = responsible;
     }
 }

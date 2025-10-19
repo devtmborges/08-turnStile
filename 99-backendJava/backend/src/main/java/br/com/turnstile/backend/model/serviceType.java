@@ -2,23 +2,37 @@ package br.com.turnstile.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull; // << NOVO: Import necessário para @NotNull
+
+// Removido: import jakarta.persistence.GeneratedValue;
+// Removido: import jakarta.persistence.GenerationType;
+// Removido: import jakarta.persistence.ManyToOne;
+// Removido: import jakarta.persistence.OneToOne;
+// Removido: import jakarta.persistence.JoinColumn;
+// Removido: import jakarta.persistence.MapsId;
 
 @Entity
 public class ServiceType {
     
-    // Usaremos uma String (o nome do serviço) como ID para simplificar o cadastro (Ex: "Corte de Cabelo")
+    // Usaremos o nome (String) como ID
     @Id
     private String nome; 
 
     @NotNull
     private String descricao;
+    
+    // Indica se este serviço envolve a distribuição do Kit Higiene Bucal
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isKitBucal = false;
 
     // --- Construtor Padrão ---
     public ServiceType() {}
 
-    // --- Getters e Setters ---
-    
+    // ------------------------------------
+    // --- GETTERS E SETTERS (COMPLETOS)---
+    // ------------------------------------
+
     public String getNome() {
         return nome;
     }
@@ -33,5 +47,13 @@ public class ServiceType {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public Boolean getIsKitBucal() {
+        return isKitBucal;
+    }
+
+    public void setIsKitBucal(Boolean isKitBucal) {
+        this.isKitBucal = isKitBucal;
     }
 }
