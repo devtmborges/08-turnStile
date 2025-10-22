@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Configura o baseURL para todas as requisições, simplificando o código das páginas
-axios.defaults.baseURL = 'http://10.86.36.157:8080/api'; 
+axios.defaults.baseURL = 'http://127.0.0.1:8080/api'; 
 
 // Um DTO simples para o usuário logado
 const initialUserState = {

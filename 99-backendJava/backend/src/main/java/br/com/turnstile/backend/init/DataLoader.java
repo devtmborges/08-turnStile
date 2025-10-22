@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class DataLoader implements CommandLineRunner {
     private final ServiceTypeRepository serviceTypeRepository;
     private final PersonRepository personRepository;
     private final VolunteerRepository volunteerRepository;
+    private static final int IDADE_LIMITE_MENOR = 14; 
 
     public DataLoader(ServiceTypeRepository serviceTypeRepository, PersonRepository personRepository, VolunteerRepository volunteerRepository) {
         this.serviceTypeRepository = serviceTypeRepository;
@@ -31,32 +33,36 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("--- Iniciando DataLoader: Inserindo dados iniciais ---");
 
-        // 1. INSERIR TIPOS DE SERVIÇO FIXOS
+        // 1. INSERIR TIPOS DE SERVIÇO FIXOS (apenas se a tabela estiver vazia)
         if (serviceTypeRepository.count() == 0) {
             List<ServiceType> services = Arrays.asList(
-                createService("Aconselhamento em assistência social", "Suporte Social"),
-                createService("Aconselhamento jurídico", "Suporte Jurídico"),
-                createServiceWithKit("Consulta odonto", "Atendimento Dentário Completo"), // Com flag de Kit
-                createService("Cabeleireiro", "Corte de Cabelo"),
-                createService("Consulta pediatra", "Atendimento Médico Pediátrico"),
-                createService("Serviços gerais", "Atendimento de Apoio/Informação"),
                 createService("Registro", "Registro de Entrada / Cadastro"),
                 createService("Lanche", "Distribuição de Alimentos"),
                 createService("Orientação", "Orientação/Direcionamento"),
+                createService("Aconselhamento em assistência social", "Suporte Social"),
+                createService("Aconselhamento jurídico", "Suporte Jurídico"),
+                createServiceWithKit("Consulta odonto", "Atendimento Dentário Completo"),
+                createService("Cabeleireiro", "Corte de Cabelo"),
+                createService("Consulta pediatra", "Atendimento Médico Pediátrico"),
+                createService("Serviços gerais", "Atendimento de Apoio/Informação"),
                 createService("Oficina 1", "Oficina de Arte"),
                 createService("Oficina 9", "Oficina de Informática")
-                // Adicione as outras oficinas aqui
             );
             serviceTypeRepository.saveAll(services);
             System.out.println("-> " + services.size() + " Tipos de Serviço inseridos.");
         }
 
-        // 2. INSERIR VOLUNTÁRIO DE TESTE (PARA LOGIN)
+        // 2. INSERIR VOLUNTÁRIO DE TESTE (Garantir que os dados não existam para evitar conflito)
         if (personRepository.findByTelefone("11987654321").isEmpty()) {
             Person p1 = new Person();
             p1.setNome("Voluntário Teste");
             p1.setTelefone("11987654321");
-            p1.setEmail("teste@turnstile.com");
+            p1.setEmail("teste@catrasanta.com");
+            
+            // CORREÇÃO: Adiciona data de nascimento válida (maior de 14 anos)
+            p1.setDataNascimento(LocalDate.of(1990, 1, 1)); 
+            p1.setIsMinor14(false); // Já é adulto (maior de 14)
+
             Person savedP1 = personRepository.save(p1);
 
             Volunteer v1 = new Volunteer();

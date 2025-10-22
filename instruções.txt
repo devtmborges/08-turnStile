@@ -1,12 +1,26 @@
+cd C:\Users\tiago\Documents\projetos-git\08-turnStile\98-frontendVite
+
+npm run dev
+
+em outro terminal
 cd C:\Users\tiago\Documents\projetos-git\08-turnStile\99-backendJava\backend
 
 .\mvnw.cmd spring-boot:run
 
-em outro terminal
-cd C:\Users\tiago\Documents\projetos-git\08-turnStile\01-frontendVite
-
-npm run dev
-
 No navegador (chrome, edge, etc.):
 Acesse http://localhost:5173/
 Faça login com o telefone de teste: 11987654321
+
+---------------------------------
+
+# 1. Navega para o diretório raiz do projeto (se não estiver lá)
+# cd C:\Users\tiago\Documents\projetos-git\08-turnStile
+
+# 2. Adiciona todas as modificações, incluindo as correções de CORS/Infra
+git add .
+
+# 3. Cria um commit descritivo. Use uma mensagem detalhada para lembrar onde paramos!
+git commit -m "fix: Correções finais de infraestrutura (CORS e H2) e implementação do layout Mobile First com dropdown."
+
+# 4. Envia as mudanças para o repositório remoto (GitHub)
+git push origin main

@@ -5,10 +5,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
-// Removendo imports de relacionamento que Person não usa: ManyToOne, OneToOne, JoinColumn, MapsId
+import jakarta.validation.constraints.NotNull;
 
-import jakarta.validation.constraints.NotNull; // << NOVO: Necessário para @NotNull
-import java.time.LocalDateTime; // << NOVO: Necessário para LocalDateTime
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.LocalDateTime;
 
 @Entity
 public class Person {
@@ -27,8 +28,13 @@ public class Person {
 
     private Boolean isMember = false; 
     
-    private Boolean isMinor = false; 
-
+    // NOVO CAMPO: Data de Nascimento
+    @NotNull
+    private LocalDate dataNascimento; 
+    
+    // NOVO CAMPO: Para marcar pessoas menores de 14 anos
+    private Boolean isMinor14 = false; 
+    
     private LocalDateTime dataRegistro = LocalDateTime.now();
 
     // --- Construtor Padrão ---
@@ -77,20 +83,38 @@ public class Person {
     public void setIsMember(Boolean isMember) {
         this.isMember = isMember;
     }
-
-    public Boolean getIsMinor() {
-        return isMinor;
+    
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setIsMinor(Boolean isMinor) {
-        this.isMinor = isMinor;
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
+    public Boolean getIsMinor14() {
+        return isMinor14;
+    }
+
+    public void setIsMinor14(Boolean isMinor14) {
+        this.isMinor14 = isMinor14;
+    }
+    
     public LocalDateTime getDataRegistro() {
         return dataRegistro;
     }
 
     public void setDataRegistro(LocalDateTime dataRegistro) {
         this.dataRegistro = dataRegistro;
+    }
+
+    /**
+     * Calcula a idade atual da pessoa.
+     */
+    public int calcularIdade() {
+        if (this.dataNascimento == null) {
+            return 0;
+        }
+        return Period.between(this.dataNascimento, LocalDate.now()).getYears();
     }
 }

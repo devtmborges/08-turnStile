@@ -1,18 +1,22 @@
 package br.com.turnstile.backend.repository;
 
 import br.com.turnstile.backend.model.Assisted;
-import br.com.turnstile.backend.model.Person; // Import necessário
+import br.com.turnstile.backend.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.List; // Import necessário
 
+@Repository
 public interface AssistedRepository extends JpaRepository<Assisted, Long> {
-    
-    // Método obrigatório para buscar um Atendido pelo número do QR Code
-    // Resolve os 3 erros de 'cannot find symbol' nos Services.
-    Optional<Assisted> findByQrCodeId(Integer qrCodeId); 
 
-    // Método para buscar todos os membros do grupo pelo responsável (usado em AssistedService)
+    // Método para buscar um Atendido pelo número do QR Code
+    Optional<Assisted> findByQrCodeId(Integer qrCodeId);
+
+    // Método para buscar a entrada Assisted correspondente a uma Person (para o responsável)
+    Optional<Assisted> findByPerson(Person person);
+
+    // Método para buscar todas as crianças ligadas a um Responsável
     List<Assisted> findByResponsible(Person responsible);
 }

@@ -2,6 +2,7 @@ package br.com.turnstile.backend.controller;
 
 import br.com.turnstile.backend.model.Assisted;
 import br.com.turnstile.backend.service.AssistedService;
+import br.com.turnstile.backend.service.AssistedService.MinorRegistration; // Importa o DTO interno do Service
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,14 @@ public class AssistedController {
     @Autowired
     private AssistedService assistedService;
 
-    // DTO para a requisição de registro de grupo
-    // LINHA 20
+    // DTO para a requisição de registro de grupo (DEVE CORRESPONDER AO FRONTEND E SERVICE)
     private record GroupRegistrationRequest(
         Integer qrCodeId, 
         String responsibleName, 
         String responsiblePhone, 
-        List<String> minorNames
-    ) {} // <<<< VERIFIQUE ESTA CHAVE DE FECHAMENTO!
+        String responsibleBirthDate, // NOVO: Data de Nascimento do Responsável
+        List<MinorRegistration> minors  // NOVO: Lista de objetos MinorRegistration
+    ) {}
 
     /**
      * Endpoint para registrar um grupo familiar (Responsável + Crianças) na entrada.
@@ -34,12 +35,19 @@ public class AssistedController {
             return ResponseEntity.badRequest().body("ID de QR Code inválido. Deve ser entre 1 e 300.");
         }
         
+        // Validação básica de campos obrigatórios
+        if (request.responsibleName() == null || request.responsibleBirthDate() == null) {
+            return ResponseEntity.badRequest().body("Nome e Data de Nascimento do Responsável são obrigatórios.");
+        }
+        
         try {
+            // Chamada com todos os 5 argumentos (incluindo a Data de Nascimento e a lista de Minors)
             List<Assisted> registered = assistedService.registerFamilyGroup(
                 request.qrCodeId(), 
                 request.responsibleName(), 
                 request.responsiblePhone(), 
-                request.minorNames()
+                request.responsibleBirthDate(), 
+                request.minors()
             );
             
             return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -48,6 +56,7 @@ public class AssistedController {
             );
             
         } catch (IllegalArgumentException e) {
+            // Erros de regra de negócio (QR já em uso, menor de 14 como responsável)
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao registrar o grupo familiar: " + e.getMessage());
@@ -55,7 +64,7 @@ public class AssistedController {
     }
     
     /**
-     * NOVO ENDPOINT: Busca os membros do grupo pelo QR Code (Para exibição no frontend dos stands).
+     * ENDPOINT: Busca os membros do grupo pelo QR Code (Para exibição no frontend dos stands).
      */
     @GetMapping("/group/{qrCodeId}")
     public ResponseEntity<?> getGroupMembers(@PathVariable Integer qrCodeId) {
